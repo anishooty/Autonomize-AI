@@ -2,6 +2,14 @@
 This is a Node.js and Express.js backend application that interacts with the GitHub API and a SQLite database. The purpose is to perform various tasks related to GitHub user data.
 
 Tasks
+Build the backend app that supports below APIs:
+1. Accept any GitHub username and save details from the GitHub API into the database. If a user’s data is already available in the database, do not call the GitHub API again.
+2. For a given user, find all the users where users mutually follow each other and save them as friends. Eg: UserA ->; Follows UserB, UserC, UserD; UserA follows back by UserB, UserC. So, UserB and UserC would be friends of UserA
+3. Search the saved data from the database based on username, location etc.
+4. Soft delete a record based on a given username from the database.
+5. Update fields like “location”, “blog”, “bio” etc for a given user in the database.
+6. Return list of all users from the database sorted by given fields like “public_repos”, “public_gists”, “followers”, “following”, “created_at” etc.
+
 Task 1: Save GitHub User Data
 Endpoint: POST /users
 Test: Send a POST request with a GitHub username to save user data to the database.
