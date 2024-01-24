@@ -151,6 +151,23 @@ app.put('/users/:username', (req, res) => {
   });
 });
 
+// Task 6: Return list of all users from the database sorted by given fields like “public_repos”, “public_gists”, “followers”, “following”, “created_at”.
+app.get('/users', (req, res) => {
+  const { sort } = req.query;
+  const validSortFields = ['public_repos', 'public_gists', 'followers', 'following', 'created_at'];
+
+  if (!sort || !validSortFields.includes(sort)) {
+    return res.status(400).send('Invalid sort field');
+  }
+
+  db.all(`SELECT * FROM users WHERE deleted = 0 ORDER BY ${sort}`, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json(rows);
+  });
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
