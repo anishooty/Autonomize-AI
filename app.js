@@ -106,6 +106,26 @@ app.get('/users/:username/friends', (req, res) => {
   });
 });
 
+// Task 3: Search the saved data from the database based on username, location etc.
+app.get('/users/search', (req, res) => {
+  const { username, location } = req.query;
+
+  let query = 'SELECT * FROM users WHERE 1=1';
+  if (username) {
+    query += ` AND username LIKE '%${username}%'`;
+  }
+  if (location) {
+    query += ` AND location LIKE '%${location}%'`;
+  }
+
+  db.all(query, [], (err, rows) => {
+    if (err) {
+      throw err;
+    }
+    res.json(rows);
+  });
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
