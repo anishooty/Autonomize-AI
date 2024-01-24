@@ -75,6 +75,37 @@ app.post('/users', (req, res) => {
   });
 });
 
+// Task 2: For a given user, find all the users where users mutually follow each other and save them as friends.
+app.get('/users/:username/friends', (req, res) => {
+  const username = req.params.username;
+
+  Promise.all([
+    axios.get(`https://api.github.com/users/${username}/following`),
+    axios.get(`https://api.github.com/users/${username}/followers`)
+  ]).then(([followingResponse, followersResponse]) => {
+    const following = followingResponse.data.map(user => user.login);
+    const followers = followersResponse.data.map(user => user.login);
+
+    const friends = following.filter(user => followers.includes(user));
+
+    // Save friends to the database
+    const userId = db.get('SELECT id FROM users WHERE username = ?', [username]);
+    friends.forEach(friend => {
+      const friendId = db.get('SELECT id FROM users WHERE username = ?', [friend]);
+
+      // Check if the friendship already exists
+      const existingFriendship = db.get('SELECT * FROM friends WHERE user_id = ? AND friend_id = ?', [userId, friendId]);
+      if (!existingFriendship) {
+        db.run(`INSERT INTO friends(user_id, friend_id) VALUES(?, ?)`, [userId, friendId]);
+      }
+    });
+
+    res.json(friends);
+  }).catch(err => {
+    res.send('Failed to fetch data from GitHub API');
+  });
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
