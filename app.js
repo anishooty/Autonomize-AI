@@ -138,6 +138,19 @@ app.delete('/users/:username', (req, res) => {
   });
 });
 
+// Task 5: Update fields like “location”, “blog”, “bio” etc for a given user in the database.
+app.put('/users/:username', (req, res) => {
+  const username = req.params.username;
+  const { location, blog, bio } = req.body;
+
+  db.run('UPDATE users SET location = ?, blog = ?, bio = ? WHERE username = ?', [location, blog, bio, username], function (err) {
+    if (err) {
+      return console.log(err.message);
+    }
+    res.send('User data has been updated');
+  });
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
