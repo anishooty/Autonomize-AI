@@ -126,6 +126,18 @@ app.get('/users/search', (req, res) => {
   });
 });
 
+// Task 4: Soft delete a record based on a given username from the database.
+app.delete('/users/:username', (req, res) => {
+  const username = req.params.username;
+
+  db.run('UPDATE users SET deleted = 1 WHERE username = ?', [username], function (err) {
+    if (err) {
+      return console.log(err.message);
+    }
+    res.send('User has been soft deleted');
+  });
+});
+
 app.listen(port, () => {
   console.log(`App listening at http://localhost:${port}`);
 });
